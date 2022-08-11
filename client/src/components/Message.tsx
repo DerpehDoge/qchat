@@ -7,7 +7,7 @@ import {
 	Text,
 	Badge,
 } from "@mantine/core";
-import React from "react";
+import React, { useRef } from "react";
 
 export interface MessageProps {
 	postedAt: string;
@@ -26,7 +26,6 @@ export default function Message({
 	scrollableRef,
 }: MessageProps) {
 	const theme = useMantineTheme();
-
 	return (
 		<Paper
 			style={{
@@ -45,7 +44,11 @@ export default function Message({
 						</Badge>
 					</Stack>
 				</Group>
-				{message}
+				<div
+					style={{ margin: 0, padding: 0 }}
+					className={"content"}
+					dangerouslySetInnerHTML={{ __html: message }}
+				></div>
 			</Stack>
 		</Paper>
 	);

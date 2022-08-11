@@ -7,8 +7,10 @@ import { showNotification } from "@mantine/notifications";
 import { IconCheck } from "@tabler/icons";
 import moment from "moment";
 import ScrollToBottom from "react-scroll-to-bottom";
+import RichTextEditor from "@mantine/rte";
 
 export default function Chat() {
+	const maxMessages = 250;
 	const theme = useMantineTheme();
 	const [value, onChange] = useState("");
 	const bottomRef = useRef(null);
@@ -83,10 +85,14 @@ export default function Chat() {
 					></div>
 				</Stack>
 			</ScrollArea>
-			<TextInput
+			<RichTextEditor
+				style={{
+					height: 400,
+					overflowY: "scroll",
+				}}
 				value={value}
 				placeholder={`Use ctrl+enter to send your message.`}
-				onChange={(e) => onChange(e.target.value)}
+				onChange={onChange}
 				onKeyDown={getHotkeyHandler([
 					[
 						"ctrl + enter",
@@ -98,6 +104,9 @@ export default function Chat() {
 								color: "teal",
 								icon: <IconCheck />,
 							});
+							if (messages.length > maxMessages) {
+								messages.shift();
+							}
 							setMessages([
 								...messages,
 								{
