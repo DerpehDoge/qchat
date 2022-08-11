@@ -1,9 +1,8 @@
 import React, { Component } from "react";
-import { Timeline } from "@mantine/core";
+import { Button, Modal, Timeline } from "@mantine/core";
 import "./queue.css";
 
-export default class Queue extends Component {
-	render() {
-		return <div>queue moment</div>;
-	}
+export default function () {
+	const [open, setOpen] = React.useState(false);
+	return <>hi</>;
 }

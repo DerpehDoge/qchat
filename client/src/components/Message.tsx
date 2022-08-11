@@ -16,15 +16,9 @@ export interface MessageProps {
 		name: string;
 		image: string;
 	};
-	scrollableRef?: React.RefObject<null>;
 }
 
-export default function Message({
-	postedAt,
-	message,
-	author,
-	scrollableRef,
-}: MessageProps) {
+export default function Message({ postedAt, message, author }: MessageProps) {
 	const theme = useMantineTheme();
 	return (
 		<Paper

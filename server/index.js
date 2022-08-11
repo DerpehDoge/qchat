@@ -19,4 +19,10 @@ server.listen(3001, () => {
 	console.log("Server is running on port 3001");
 });
 
-io.on("connect", (socket) => {});
+io.on("connect", (socket) => {
+	console.log("New client connected");
+	socket.on("message", (msg) => {
+		console.log(msg);
+		socket.broadcast.emit("message", msg);
+	});
+});
