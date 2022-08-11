@@ -1,0 +1,18 @@
+.mantine-RichTextEditor-root {
+	scrollbar-width: auto;
+	scrollbar-color: #8c8c8c;
+}
+
+/* Chrome, Edge, and Safari */
+.mantine-RichTextEditor-root::-webkit-scrollbar {
+	width: 12px;
+}
+
+.mantine-RichTextEditor-root::-webkit-scrollbar-track {
+	background: transparent;
+}
+
+.mantine-RichTextEditor-root::-webkit-scrollbar-thumb {
+	background-color: #8c8c8c;
+	border-radius: 10px;
+}
