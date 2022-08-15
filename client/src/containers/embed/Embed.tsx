@@ -1,10 +1,9 @@
 import { Component, useState, useEffect } from "react";
 import "./embed.css";
 import YouTube, { YouTubeEvent } from "react-youtube";
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 import { AspectRatio, useMantineTheme } from "@mantine/core";
 import { useElementSize } from "@mantine/hooks";
-let socket = io("http://localhost:3001").connect();
 
 enum PlayerState {
 	UNSTARTED = -1,
@@ -15,7 +14,11 @@ enum PlayerState {
 	CUED = 5,
 }
 
-export default function () {
+type props = {
+	socket: Socket | null;
+};
+
+export default function (props: props) {
 	const theme = useMantineTheme();
 	const { ref, width, height } = useElementSize();
 	return (

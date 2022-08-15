@@ -21,7 +21,14 @@ server.listen(3001, () => {
 });
 
 io.on("connect", (socket) => {
-	console.log("New client connected");
+	socket.on("requestRoomSize", () => {
+		socket.emit("roomSize", io.engine.clientsCount);
+		io.emit("roomSize", io.engine.clientsCount);
+	});
+	socket.on("disconnect", () => {
+		console.log("Client disconnected");
+		io.emit("roomSize", io.engine.clientsCount);
+	});
 	socket.on("message", (msg) => {
 		console.log(msg);
 		socket.broadcast.emit("message", msg);

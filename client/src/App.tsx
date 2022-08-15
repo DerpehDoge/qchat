@@ -9,11 +9,28 @@ import {
 	Container,
 } from "@mantine/core";
 import { useViewportSize } from "@mantine/hooks";
+import io, { Socket } from "socket.io-client";
+import { useEffect, useState } from "react";
 
 export default function () {
 	const { height, width } = useViewportSize();
 	const theme = useMantineTheme();
-	return (
+	const [socket, setSocket] = useState<Socket | null>(null);
+	const [connected, setConnected] = useState(false);
+	let nonConnectedSocket = io("http://localhost:3001", {
+		autoConnect: false,
+	});
+
+	useEffect(() => {
+		nonConnectedSocket.connect();
+		nonConnectedSocket.on("connect", () => {
+			setSocket(nonConnectedSocket);
+			setConnected(true);
+			console.log(nonConnectedSocket.id);
+		});
+	}, []);
+
+	return connected ? (
 		<div>
 			<AppShell
 				styles={{
@@ -46,7 +63,7 @@ export default function () {
 									height: "100%",
 								}}
 							>
-								<Chat></Chat>
+								<Chat socket={socket}></Chat>
 							</Center>
 						</Container>
 					</Navbar>
@@ -58,7 +75,7 @@ export default function () {
 						height: "100%",
 					}}
 				>
-					<Embed></Embed>
+					<Embed socket={socket}></Embed>
 
 					<Center
 						style={{
@@ -70,10 +87,12 @@ export default function () {
 							width: "100%",
 						}}
 					>
-						<Queue></Queue>
+						<Queue socket={socket}></Queue>
 					</Center>
 				</Stack>
 			</AppShell>
 		</div>
+	) : (
+		<div>Loading...</div>
 	);
 }

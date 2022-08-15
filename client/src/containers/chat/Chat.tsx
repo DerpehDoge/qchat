@@ -18,10 +18,12 @@ import { IconCheck } from "@tabler/icons";
 import moment from "moment";
 import RichTextEditor from "@mantine/rte";
 
-import io from "socket.io-client";
-const socket = io("https://mcdonald-mg-sie-ar.trycloudflare.com").connect();
+import { Socket } from "socket.io-client";
+type props = {
+	socket: Socket | null;
+};
 
-export default function Chat() {
+export default function Chat(props: props) {
 	const maxMessages = 250;
 	const theme = useMantineTheme();
 	const [value, onChange] = useState("");
@@ -54,17 +56,18 @@ export default function Chat() {
 	});
 
 	const [messages, setMessages] = useState<MessageProps[]>([]);
-
+	let socket = props.socket;
 	useEffect(() => {
-		socket.on("message", (msg) => {
+		console.log("socket created");
+		socket?.on("message", (msg) => {
 			console.log(msg);
 			setMessages((messages) => [...messages, msg]);
 		});
 
 		return () => {
-			socket.removeAllListeners("message");
+			socket?.off("message");
 		};
-	}, [socket]);
+	}, []);
 	return (
 		<Stack
 			justify="space-between"
@@ -169,7 +172,8 @@ export default function Chat() {
 								message: value,
 								author: user,
 							};
-							socket.emit("message", message);
+							socket?.emit("message", message);
+							console.log("emitted.");
 							setMessages([...messages, message]);
 							onChange("");
 							//@ts-ignore
@@ -198,7 +202,7 @@ export default function Chat() {
 						message: value,
 						author: user,
 					};
-					socket.emit("message", message);
+					socket?.emit("message", message);
 					setMessages([...messages, message]);
 					onChange("");
 					//@ts-ignore
