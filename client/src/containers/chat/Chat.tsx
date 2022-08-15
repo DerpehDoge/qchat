@@ -19,9 +19,7 @@ import moment from "moment";
 import RichTextEditor from "@mantine/rte";
 
 import io from "socket.io-client";
-const socket = io(
-	"https://tomorrow-occurrence-considers-bundle.trycloudflare.com"
-).connect();
+const socket = io("https://mcdonald-mg-sie-ar.trycloudflare.com").connect();
 
 export default function Chat() {
 	const maxMessages = 250;
