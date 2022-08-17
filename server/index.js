@@ -20,14 +20,25 @@ server.listen(3001, () => {
 	console.log("Server is running on port 3001");
 });
 
+let onlineUsers = new Map();
+
 io.on("connect", (socket) => {
-	socket.on("requestRoomSize", () => {
-		socket.emit("roomSize", io.engine.clientsCount);
-		io.emit("roomSize", io.engine.clientsCount);
+	onlineUsers.set(socket.id, {
+		name: "setting name...",
+		image: "",
+	});
+	console.log(onlineUsers);
+	socket.on("requestOnlineUsers", () => {
+		io.emit("onlineUsers", Object.fromEntries(onlineUsers));
+	});
+	socket.on("userUpdate", (user) => {
+		onlineUsers.set(socket.id, user);
+		io.emit("onlineUsers", Object.fromEntries(onlineUsers));
 	});
 	socket.on("disconnect", () => {
+		onlineUsers.delete(socket.id);
 		console.log("Client disconnected");
-		io.emit("roomSize", io.engine.clientsCount);
+		io.emit("onlineUsers", Object.fromEntries(onlineUsers));
 	});
 	socket.on("message", (msg) => {
 		console.log(msg);

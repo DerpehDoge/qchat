@@ -40,7 +40,9 @@ export default function Chat(props: props) {
 	const form = useForm({
 		initialValues: {
 			name: "stranger",
-			image: "https://avatars0.githubusercontent.com/u/17098281?s=460&v=4",
+			image: `https://avatars.dicebear.com/api/identicon/${Math.floor(
+				Math.random() * Math.pow(16, 4)
+			).toString(16)}.svg`,
 		},
 
 		validate: {
@@ -57,6 +59,9 @@ export default function Chat(props: props) {
 
 	const [messages, setMessages] = useState<MessageProps[]>([]);
 	let socket = props.socket;
+
+	// run this only ONCE
+
 	useEffect(() => {
 		console.log("socket created");
 		socket?.on("message", (msg) => {
@@ -95,6 +100,7 @@ export default function Chat(props: props) {
 					onSubmit={form.onSubmit((values) => {
 						setPromptOpen(false);
 						setUser(values);
+						socket?.emit("userUpdate", values);
 						console.log(values);
 					})}
 				>

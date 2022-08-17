@@ -17,9 +17,12 @@ export default function () {
 	const theme = useMantineTheme();
 	const [socket, setSocket] = useState<Socket | null>(null);
 	const [connected, setConnected] = useState(false);
-	let nonConnectedSocket = io("http://localhost:3001", {
-		autoConnect: false,
-	});
+	let nonConnectedSocket = io(
+		"https://teacher-obesity-jonathan-apartment.trycloudflare.com",
+		{
+			autoConnect: false,
+		}
+	);
 
 	useEffect(() => {
 		nonConnectedSocket.connect();
@@ -93,6 +96,15 @@ export default function () {
 			</AppShell>
 		</div>
 	) : (
-		<div>Loading...</div>
+		<div>
+			loading website...
+			<br />
+			if you still see this it looks like the socket hasn't connected yet.
+			it's either a bug, something's wrong with your connection, the
+			server is down, or the creator of this website has made a stupid
+			mistake. if you are able to, scold the creator and send him the logs
+			(located in inspect element and in the console tab) so that he can
+			try (and fail) to fix the website. thanks.
+		</div>
 	);
 }
