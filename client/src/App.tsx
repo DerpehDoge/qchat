@@ -18,7 +18,7 @@ export default function () {
 	const [socket, setSocket] = useState<Socket | null>(null);
 	const [connected, setConnected] = useState(false);
 	let nonConnectedSocket = io(
-		"https://teacher-obesity-jonathan-apartment.trycloudflare.com",
+		"https://capture-matthew-hundreds-error.trycloudflare.com/",
 		{
 			autoConnect: false,
 		}
@@ -101,10 +101,10 @@ export default function () {
 			<br />
 			if you still see this it looks like the socket hasn't connected yet.
 			it's either a bug, something's wrong with your connection, the
-			server is down, or the creator of this website has made a stupid
-			mistake. if you are able to, scold the creator and send him the logs
-			(located in inspect element and in the console tab) so that he can
-			try (and fail) to fix the website. thanks.
+			server is down (or starting), or the creator of this website has
+			made a stupid mistake. if you are able to, scold the creator and
+			send him the logs (located in inspect element and in the console
+			tab) so that he can try (and fail) to fix the website. thanks.
 		</div>
 	);
 }

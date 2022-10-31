@@ -41,9 +41,6 @@ export default function (props: props) {
 
 	return (
 		<div>
-			<h1>
-				look at who you're with in this room. say hi. this is a threat.
-			</h1>
 			<Tooltip.Group openDelay={300} closeDelay={100}>
 				<Avatar.Group spacing="xl">
 					{Array.from(onlineUsers.entries()).map((entry, index) => {
