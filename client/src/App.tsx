@@ -17,12 +17,9 @@ export default function () {
 	const theme = useMantineTheme();
 	const [socket, setSocket] = useState<Socket | null>(null);
 	const [connected, setConnected] = useState(false);
-	let nonConnectedSocket = io(
-		"https://capture-matthew-hundreds-error.trycloudflare.com/",
-		{
-			autoConnect: false,
-		}
-	);
+	let nonConnectedSocket = io("localhost:3001", {
+		autoConnect: false,
+	});
 
 	useEffect(() => {
 		nonConnectedSocket.connect();
