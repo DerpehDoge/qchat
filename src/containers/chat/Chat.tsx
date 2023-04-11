@@ -21,6 +21,7 @@ import moment from "moment";
 import RichTextEditor from "@mantine/rte";
 
 import { Socket } from "socket.io-client";
+import { createHash } from "crypto";
 type props = {
 	socket: Socket | null;
 };
@@ -236,14 +237,7 @@ export default function Chat(props: props) {
 					width: "100%",
 				}}
 			>
-				<SimpleGrid
-					cols={1}
-					style={{
-						maxHeight: height,
-					}}
-					p="md"
-					pb="10px"
-				>
+				<SimpleGrid cols={1} p="md">
 					{messageList}
 					<div
 						ref={bottomRef}

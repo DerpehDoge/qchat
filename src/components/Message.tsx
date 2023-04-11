@@ -72,6 +72,7 @@ export default function Message({
 						</Badge>
 					</Stack>
 				</Group>
+				{/* Make sure to edit the inner html to resize any images */}
 				<div
 					style={{
 						margin: 0,
@@ -79,7 +80,11 @@ export default function Message({
 						overflowWrap: "break-word",
 					}}
 					className={"content"}
-					dangerouslySetInnerHTML={{ __html: message }}
+					dangerouslySetInnerHTML={{
+						__html: message
+							.split("<img")
+							.join(`<img style="width: 100%"`),
+					}}
 					ref={ref}
 				></div>
 			</Stack>
