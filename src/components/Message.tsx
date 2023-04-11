@@ -7,8 +7,6 @@ import {
 	Text,
 	Badge,
 } from "@mantine/core";
-import { showNotification } from "@mantine/notifications";
-import { IconAlertTriangle } from "@tabler/icons";
 import { useEffect, useRef } from "react";
 
 export interface MessageProps {
@@ -25,39 +23,13 @@ export interface MessageProps {
 	firstRender: boolean;
 }
 
-export default function Message({
-	postedAt,
-	message,
-	author,
-	me,
-	firstRender,
-}: MessageProps) {
+export default function Message({ postedAt, message, author }: MessageProps) {
 	const theme = useMantineTheme();
 	let ref = useRef(null);
-	useEffect(() => {
-		// @ts-ignore
-		let mentions = ref.current.querySelectorAll(".mention");
-		if (mentions) {
-			mentions.forEach((a: any) => {
-				if (a.innerText.trim() == `@${me.name}`) {
-					a.classList.add("mentionedMe");
-					if (firstRender) {
-						showNotification({
-							title: `mentioned!`,
-							message: `you've been mentioned by ${author.name}!`,
-							autoClose: 3000,
-							color: "yellow",
-							icon: <IconAlertTriangle />,
-						});
-					}
-				}
-			});
-		}
-	}, [ref]);
 	return (
 		<Paper
 			style={{
-				padding: theme.spacing.md,
+				padding: theme.spacing.sm,
 			}}
 		>
 			<Stack>
@@ -74,6 +46,7 @@ export default function Message({
 				</Group>
 				{/* Make sure to edit the inner html to resize any images */}
 				<div
+					key={Math.random() * 10000000000000000}
 					style={{
 						margin: 0,
 						padding: 0,

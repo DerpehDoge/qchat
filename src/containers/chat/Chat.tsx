@@ -16,12 +16,17 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import "./chat.css";
 import { getHotkeyHandler } from "@mantine/hooks";
 import { showNotification } from "@mantine/notifications";
-import { IconCheck } from "@tabler/icons";
 import moment from "moment";
-import RichTextEditor from "@mantine/rte";
+import { RichTextEditor, Link } from "@mantine/tiptap";
+import { useEditor } from "@tiptap/react";
+import Highlight from "@tiptap/extension-highlight";
+import StarterKit from "@tiptap/starter-kit";
+import Underline from "@tiptap/extension-underline";
+import TextAlign from "@tiptap/extension-text-align";
+import Superscript from "@tiptap/extension-superscript";
+import SubScript from "@tiptap/extension-subscript";
 
 import { Socket } from "socket.io-client";
-import { createHash } from "crypto";
 type props = {
 	socket: Socket | null;
 };
@@ -32,6 +37,24 @@ export default function Chat(props: props) {
 	const [value, onChange] = useState("");
 	const [promptOpen, setPromptOpen] = useState(false);
 	const bottomRef = useRef(null);
+	const editor = useEditor({
+		extensions: [
+			StarterKit,
+			Underline,
+			Link,
+			Superscript,
+			SubScript,
+			Highlight,
+			TextAlign.configure({
+				types: ["heading", "paragraph"],
+			}),
+		],
+		content: value,
+		onUpdate: ({ editor }) => {
+			onChange(editor.getHTML());
+		},
+		// add keyboard shortcuts
+	});
 	useEffect(() => {
 		setPromptOpen(true);
 	}, []);
@@ -173,11 +196,6 @@ export default function Chat(props: props) {
 
 	// set textbox height
 	let messagesRef = useRef(null);
-	const [height, setHeight] = useState(0);
-	useEffect(() => {
-		//@ts-ignore
-		setHeight(messagesRef.current.clientHeight);
-	});
 
 	return (
 		<Stack
@@ -193,8 +211,13 @@ export default function Chat(props: props) {
 				onClose={() => setPromptOpen(false)}
 				title={"Looks like you're new here!"}
 				centered
-				overlayBlur={6}
-				transition="slide-up"
+				overlayProps={{
+					blur: 8,
+				}}
+				transitionProps={{
+					duration: 200,
+					transition: "fade",
+				}}
 				closeOnClickOutside={false}
 				withCloseButton={false}
 			>
@@ -212,14 +235,16 @@ export default function Chat(props: props) {
 					})}
 				>
 					<TextInput
+						// @ts-ignore because ts is dumb
+						label="your username"
 						required
-						label="username"
 						placeholder="floof"
 						{...form.getInputProps("name")}
 					/>
 					<TextInput
 						required
-						label="avatar URL"
+						// @ts-ignore because ts is STILL dumb
+						label="avatar URL (rightclick and copy image address)"
 						placeholder="https://cdn.discordapp.com/avatars/528337161502588929/82760972bddbabc7435666fd992c0ef6.webp?size=100"
 						{...form.getInputProps("image")}
 					/>
@@ -248,38 +273,70 @@ export default function Chat(props: props) {
 				</SimpleGrid>
 			</ScrollArea>
 			<RichTextEditor
-				styles={{
-					root: {
-						height: 300,
-						overflowY: "auto",
-					},
+				// styles={{
+				// 	root: {
+				// 		height: 300,
+				// 		overflowY: "auto",
+				// 	},
+				// }}
+				editor={editor}
+				// send message when shift+enter is pressed
+				onKeyDown={(e) => {
+					if (e.key === "Enter" && !e.shiftKey) {
+						let message = {
+							postedAt: moment().format("MM/DD h:mm a"),
+							message: value,
+							author: user,
+							firstRender: true,
+						};
+						socket?.emit("message", message);
+						setMessages([...messages, message]);
+						editor?.commands.setContent("");
+						onChange("");
+					}
 				}}
-				value={value}
-				placeholder={`Press enter to send a message. shift + enter lets you use multiple lines, and use @ to use mentions.`}
-				onChange={onChange}
-				mentions={mentions}
-				onKeyDown={getHotkeyHandler([
-					[
-						"enter",
-						() => {
-							if (value !== "<p><br></p><p><br></p>") {
-								let message = {
-									postedAt: moment().format("MM/DD h:mm a"),
-									message: value,
-									author: user,
-									firstRender: true,
-								};
-								socket?.emit("message", message);
-								console.log("emitted.");
-								onChange("");
-								setMessages([...messages, message]);
-							} else {
-								onChange("");
-							}
-						},
-					],
-				])}
-			/>
+			>
+				<RichTextEditor.Toolbar sticky stickyOffset={60}>
+					<RichTextEditor.ControlsGroup>
+						<RichTextEditor.Bold />
+						<RichTextEditor.Italic />
+						<RichTextEditor.Underline />
+						<RichTextEditor.Strikethrough />
+						<RichTextEditor.ClearFormatting />
+						<RichTextEditor.Highlight />
+						<RichTextEditor.Code />
+					</RichTextEditor.ControlsGroup>
+
+					<RichTextEditor.ControlsGroup>
+						<RichTextEditor.H1 />
+						<RichTextEditor.H2 />
+						<RichTextEditor.H3 />
+						<RichTextEditor.H4 />
+					</RichTextEditor.ControlsGroup>
+
+					<RichTextEditor.ControlsGroup>
+						<RichTextEditor.Blockquote />
+						<RichTextEditor.Hr />
+						<RichTextEditor.BulletList />
+						<RichTextEditor.OrderedList />
+						<RichTextEditor.Subscript />
+						<RichTextEditor.Superscript />
+					</RichTextEditor.ControlsGroup>
+
+					<RichTextEditor.ControlsGroup>
+						<RichTextEditor.Link />
+						<RichTextEditor.Unlink />
+					</RichTextEditor.ControlsGroup>
+
+					<RichTextEditor.ControlsGroup>
+						<RichTextEditor.AlignLeft />
+						<RichTextEditor.AlignCenter />
+						<RichTextEditor.AlignJustify />
+						<RichTextEditor.AlignRight />
+					</RichTextEditor.ControlsGroup>
+				</RichTextEditor.Toolbar>
+				<RichTextEditor.Content />
+			</RichTextEditor>
 			<Button
 				onClick={() => {
 					let message = {
@@ -290,6 +347,7 @@ export default function Chat(props: props) {
 					};
 					socket?.emit("message", message);
 					setMessages([...messages, message]);
+					editor?.commands.setContent("");
 					onChange("");
 				}}
 			>
